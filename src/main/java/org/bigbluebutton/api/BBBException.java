@@ -1,8 +1,27 @@
-package BigBlueButton.api;
+/**
+ * BigBlueButton - http://www.bigbluebutton.org
+ *
+ * Copyright (c) 2018 onwards by respective authors (see below). All rights reserved.
+ *
+ * BigBlueButton is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * BigBlueButton is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.bigbluebutton.api;
 
 /**
  * Exception generated while communicating with BBB server
- * 
+ *
  * see https://github.com/sakaicontrib/bbb-tool/blob/master/api/src/java/org/sakaiproject/bbb/api/BBBException.java
  */
 public class BBBException extends Exception {
@@ -38,11 +57,11 @@ public class BBBException extends Exception {
 	public void setMessageKey(String messageKey) {
 		this.messageKey = messageKey;
 	}
-	
+
 	public String getPrettyMessage() {
 		String _message = getMessage();
 		String _messageKey = getMessageKey();
-		
+
 		StringBuilder pretty = new StringBuilder();
 		if(_message != null) {
 			pretty.append(_message);
@@ -54,5 +73,5 @@ public class BBBException extends Exception {
 		}
 		return pretty.toString();
 	}
-	
+
 }

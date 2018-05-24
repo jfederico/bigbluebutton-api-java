@@ -1,4 +1,23 @@
-package BigBlueButton.impl;
+/**
+ * BigBlueButton - http://www.bigbluebutton.org
+ *
+ * Copyright (c) 2018 onwards by respective authors (see below). All rights reserved.
+ *
+ * BigBlueButton is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * BigBlueButton is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.bigbluebutton.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,22 +32,22 @@ import org.apache.commons.codec.binary.Base64;
  * Java class that stores that modules configuration to be used for create BigBlueButton meeting.
  * See the following url for more details
  * https://github.com/mconf/bigbluebutton-api-ruby/blob/master/lib/bigbluebutton_modules.rb
- * 
+ *
  * @author Yunkai Wang
  */
 public class BBBModule {
 	public enum PresentationType {
 		url, file, base64;
 	}
-	
+
 	private LinkedList<String> presentation_urls = new LinkedList<String>();
 	private LinkedList<String> presentation_files = new LinkedList<String>();
 	private Map<String, String> presentation_base64s = new HashMap<String, String>();
-	
+
 	public void add_presentation(PresentationType type, String value) {
 		add_presentation(type, value, "");
 	}
-	
+
 	public void add_presentation(PresentationType type, String value, String name) {
 		switch (type) {
 		case url:
@@ -42,15 +61,15 @@ public class BBBModule {
 			return;
 		}
 	}
-	
+
 	public String to_xml() throws IOException {
 		if (!has_presentation()) return "";
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><modules>";
-		xml += presentations_to_xml();		
+		xml += presentations_to_xml();
 		xml += "</modules>";
 		return xml;
 	}
-	
+
 	private String presentations_to_xml() throws IOException {
 		String xml = "<module name=\"presentation\">";
 		for (String url : presentation_urls)
@@ -60,7 +79,7 @@ public class BBBModule {
 			xml += entry.getValue();
 			xml += "</document>";
 		}
-		
+
 		for (String fileName : presentation_files) {
 			File f = new File(fileName);
 			xml += String.format("<document name=\"%s\">", f.getName());

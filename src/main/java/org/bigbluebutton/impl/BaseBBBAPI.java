@@ -1,4 +1,23 @@
-package BigBlueButton.impl;
+/**
+ * BigBlueButton - http://www.bigbluebutton.org
+ *
+ * Copyright (c) 2018 onwards by respective authors (see below). All rights reserved.
+ *
+ * BigBlueButton is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * BigBlueButton is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.bigbluebutton.impl;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -37,7 +56,7 @@ import org.xml.sax.SAXException;
 /**
  * Base class for interacting with any BigBlueButton API version.
  * @author Nuno Fernandes
- * 
+ *
  * Last modified by Yunkai Wang
  */
 public class BaseBBBAPI implements BBBAPI {
@@ -66,7 +85,7 @@ public class BaseBBBAPI implements BBBAPI {
     protected final static String APICALL_DELETERECORDINGS = "deleteRecordings";
     protected final static String APICALL_GETCONFIGXML = "getDefaultConfigXML";
     protected final static String APICALL_SETCONFIGXML = "setConfigXML";
-    
+
     // API Response Codes
     protected final static String APIRESPONSE_SUCCESS = "SUCCESS";
     protected final static String APIRESPONSE_FAILED = "FAILED";
@@ -106,20 +125,20 @@ public class BaseBBBAPI implements BBBAPI {
     private String encode(String msg) throws UnsupportedEncodingException {
     	return URLEncoder.encode(msg, getParametersEncoding());
     }
-    
+
     // -----------------------------------------------------------------------
     // --- BBB API implementation methods ------------------------------------
     // -----------------------------------------------------------------------
-    
+
     /* Create BBB meeting */
     public BBBMeeting createMeeting(final String meetingID) throws BBBException {
     	return createMeeting(new BBBMeeting(meetingID), null);
     }
-    
+
     public BBBMeeting createMeeting(final BBBMeeting meeting) throws BBBException {
     	return createMeeting(meeting, null);
     }
-    
+
     public BBBMeeting createMeeting(final BBBMeeting meeting, final BBBModule module) throws BBBException {
     	 try {
     		 StringBuilder query = new StringBuilder();
@@ -167,7 +186,7 @@ public class BaseBBBAPI implements BBBAPI {
              if (meeting.getMuteOnStart() != null)
     			 query.append("&muteOnStart=" + Boolean.toString(meeting.getMuteOnStart()));
              query.append(getCheckSumParameterForQuery(APICALL_CREATE, query.toString()));
-             
+
              Map<String, Object> response = doAPICall(APICALL_CREATE, query.toString(),
             		 module == null ? null : module.to_xml());
 
@@ -180,7 +199,7 @@ public class BaseBBBAPI implements BBBAPI {
              try {
 				meeting.setStartDate(formatter.parse((String)response.get("createDate")));
 			} catch (ParseException e) { }
-             
+
              return meeting;
          } catch (BBBException e) {
              throw e;
@@ -221,7 +240,7 @@ public class BaseBBBAPI implements BBBAPI {
     public Map<String, Object> getMeetingInfo(final BBBMeeting meeting) throws BBBException {
     	return getMeetingInfo(meeting.getMeetingID(), meeting.getModeratorPW());
     }
-    
+
     public Map<String, Object> getMeetingInfo(String meetingID, String password)
             throws BBBException {
         try {
@@ -240,7 +259,7 @@ public class BaseBBBAPI implements BBBAPI {
     public boolean endMeeting(final BBBMeeting meeting) throws BBBException {
     	return endMeeting(meeting.getMeetingID(), meeting.getModeratorPW());
     }
-    
+
     public boolean endMeeting(String meetingID, String password) throws BBBException {
     	StringBuilder query = new StringBuilder();
         query.append("meetingID=" + meetingID);
@@ -260,24 +279,24 @@ public class BaseBBBAPI implements BBBAPI {
 
         return true;
     }
-    
+
     /** Get recordings from BBB server */
 	public Map<String, Object> getRecordings() throws BBBException {
 		return getRecordings(null, null, null, null);
 	}
-	
+
 	public Map<String, Object> getRecordings(String meetingIDs) throws BBBException {
 		return getRecordings(meetingIDs, null, null, null);
 	}
-	
+
 	public Map<String, Object> getRecordings(String meetingIDs, String recordIDs) throws BBBException {
 		return getRecordings(meetingIDs, recordIDs, null, null);
 	}
-	
+
 	public Map<String, Object> getRecordings(String meetingIDs, String recordIDs, String states) throws BBBException {
 		return getRecordings(meetingIDs, recordIDs, states, null);
 	}
-    
+
 	public Map<String, Object> getRecordings(String meetingIDs, String recordIDs, String states, Map<String, String> meta) throws BBBException {
 	  	  try {
 	          StringBuilder query = new StringBuilder();
@@ -305,7 +324,7 @@ public class BaseBBBAPI implements BBBAPI {
 	             throw new BBBException(BBBException.MESSAGEKEY_INTERNALERROR, e.getMessage(), e);
 	      }
 	}
-	
+
 	/* Detete a record from BBB server */
 	public boolean deteteRecordings(String recordIDs) throws BBBException {
 		StringBuilder query = new StringBuilder();
@@ -338,7 +357,7 @@ public class BaseBBBAPI implements BBBAPI {
     public boolean updateRecordings(String recordingIDs) throws BBBException {
     	return updateRecordings(recordingIDs, null);
     }
-    
+
 	public boolean updateRecordings(String recordingIDs, Map<String, String> meta) throws BBBException {
 		try {
 			StringBuilder query = new StringBuilder();
@@ -365,7 +384,7 @@ public class BaseBBBAPI implements BBBAPI {
 	public String getJoinMeetingURL(String meetingID, String password, String userDisplayName) {
 		return getJoinMeetingURL(meetingID, password, userDisplayName, null);
 	}
-    
+
     public String getJoinMeetingURL(String meetingID, String password, String userDisplayName, String userId) {
     	StringBuilder url = null;
     	try {
@@ -373,7 +392,7 @@ public class BaseBBBAPI implements BBBAPI {
 	        joinQuery.append("meetingID=" + meetingID);
 	        if (userId != null)
 	        	joinQuery.append("&userID=" + encode(userId));
-	        
+
 	        joinQuery.append("&fullName=");
 	        userDisplayName = (userDisplayName == null) ? "user" : userDisplayName;
 	        try {
@@ -383,7 +402,7 @@ public class BaseBBBAPI implements BBBAPI {
 	        }
 	        joinQuery.append("&password=" + password);
 	        joinQuery.append(getCheckSumParameterForQuery(APICALL_JOIN, joinQuery.toString()));
-	
+
 	        url = new StringBuilder(bbbUrl);
 	        if (url.toString().endsWith("/api")) {
 	            url.append("/");
@@ -401,7 +420,7 @@ public class BaseBBBAPI implements BBBAPI {
     		StringBuilder query = new StringBuilder();
             query.append(getCheckSumParameterForQuery(APICALL_GETCONFIGXML, query.toString()));
             Map<String, Object> response = doAPICall(APICALL_GETCONFIGXML, query.toString());
-            
+
             File file = new File(filePath);
 			if (file.exists() && !file.canWrite()) {
 				throw new IOException("Failed to edit " + filePath);
@@ -409,7 +428,7 @@ public class BaseBBBAPI implements BBBAPI {
 				if (!file.createNewFile())
 					throw new IOException("Failed to create " + filePath);
 			}
-            
+
             FileOutputStream output = new FileOutputStream(file);
             output.write(((String)response.get("xml")).getBytes());
             output.close();
@@ -420,19 +439,19 @@ public class BaseBBBAPI implements BBBAPI {
             throw new BBBException(BBBException.MESSAGEKEY_INTERNALERROR, e.getMessage(), e);
         }
     }
-    
+
     /* set the config.xml file for the given meeting */
     public boolean setConfigXML(String meetingID, String filePath) throws BBBException {
     	try {
     		StringBuilder query = new StringBuilder();
     		query.append("meetingID=" + meetingID);
             query.append(getCheckSumParameterForQuery(APICALL_SETCONFIGXML, query.toString()));
-            
+
             File file = new File(filePath);
 			if (!file.exists() || !file.canRead()) {
 				throw new IOException("Failed to read " + filePath);
 			}
-            
+
             FileInputStream input = new FileInputStream(file);
             byte[] b = input.readAllBytes();
             input.close();
@@ -449,7 +468,7 @@ public class BaseBBBAPI implements BBBAPI {
             throw new BBBException(BBBException.MESSAGEKEY_INTERNALERROR, e.getMessage(), e);
         }
     }
-    
+
     /** Get the BBB API version running on BBB server */
     public final String getAPIVersion() {
         String _version = null;
@@ -512,7 +531,7 @@ public class BaseBBBAPI implements BBBAPI {
             urlStr.append("?");
             urlStr.append(query);
         }
-        
+
         try {
             // open connection
             URL url = new URL(urlStr.toString());
@@ -534,7 +553,7 @@ public class BaseBBBAPI implements BBBAPI {
                 httpConnection.setRequestMethod("GET");
             }
             httpConnection.connect();
-            
+
             int responseCode = httpConnection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 // read response
@@ -562,13 +581,13 @@ public class BaseBBBAPI implements BBBAPI {
                 //Patch to fix the NaN error
                 String stringXml = xml.toString();
                 stringXml = stringXml.replaceAll(">.\\s+?<", "><");
-                
+
                 if (apiCall.equals(APICALL_GETCONFIGXML)) {
                 	Map<String, Object> map = new HashMap<String, Object>();
                 	map.put("xml", stringXml);
                 	return map;
                 }
-                
+
                 Document dom = null;
 
                 // Initialize XML libraries
@@ -588,7 +607,7 @@ public class BaseBBBAPI implements BBBAPI {
                 if (APIRESPONSE_FAILED.equals(returnCode)) {
                     throw new BBBException((String) response.get("messageKey"), (String) response.get("message"));
                 }
-                
+
                 return response;
             } else {
                 throw new BBBException(BBBException.MESSAGEKEY_HTTPERROR, "BBB server responded with HTTP status code " + responseCode);
